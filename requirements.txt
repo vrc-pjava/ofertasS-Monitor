@@ -1,12 +1,3 @@
-Bibliotecas Necessárias
-Instale via pip install ou requirements.txt. Foco em leveza para free tiers.
-
-APIs: requests (HTTP), python-amazon-paapi (Amazon PA-API 5.0), cryptography (SHA256 Shopee), paapi5-python-sdk (Amazon alternativo).
-
-Scraping Anti-Bot: playwright (navegador headless com rotação UA), beautifulsoup4 (parser HTML), fake-useragent (headers rotativos). Prepare para proxies gratuitos via free-proxy-list.net.
-
-RSS/XML: feedparser (Awin/Rakuten feeds).
-
-Telegram: telethon (ler grupos privados/públicos com sessions seguras).
-
-Utils: asyncio (async), python-dotenv (.env secrets), pandas (dados), schedule (cron local)
+requests
+cryptography
+python-dotenv

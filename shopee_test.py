@@ -6,8 +6,8 @@ from dotenv import load_dotenv
 import json
 
 # Suas chaves aqui (substitua!)
-APP_ID = os.getenv ('18300460801')
-SECRET = os.getenv ('7CGQWFPZLTBMB5ULEIPWS6KJPMRSPC3B')
+APP_ID = os.getenv ('18300460801').strip()
+SECRET = os.getenv ('7CGQWFPZLTBMB5ULEIPWS6KJPMRSPC3B').strip()
 
 def generate_signature(app_id, timestamp, payload, secret):
     string_to_sign = f"{app_id}{timestamp}{payload}{secret}"

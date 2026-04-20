@@ -1,23 +1,18 @@
-import requests
-import hashlib
-import time
 import os
+import time
 import json
+import hashlib
+import requests
 from dotenv import load_dotenv
 
 load_dotenv()
 
-APP_ID = os.getenv("18300460801", "").strip()
-SECRET = os.getenv("7CGQWFPZLTBMB5ULEIPWS6KJPMRSPC3B", "").strip()
+APP_ID = os.getenv("SHOPEE_APP_ID", "").strip()
+SECRET = os.getenv("SHOPEE_SECRET", "").strip()
 
-def generate_signature(app_id, timestamp, payload, secret):
-    string_to_sign = f"{app_id}{timestamp}{payload}{secret}"
-    return hashlib.sha256(string_to_sign.encode()).hexdigest()
+URL = "https://open-api.affiliate.shopee.com.br/graphql"
 
-def search_offers(keyword="celular"):
-    url = "https://open-api.affiliate.shopee.com.br/graphql"
-    timestamp = str(int(time.time()))
-
+def build_payload(keyword="celular"):
     query = f"""
     {{
       productOfferV2(
@@ -32,23 +27,42 @@ def search_offers(keyword="celular"):
           productName
           productLink
           offerLink
+          imageUrl
           priceMin
           priceMax
+          priceDiscountRate
+          sales
+          ratingStar
           commissionRate
+          commission
+        }}
+        pageInfo {{
+          page
+          limit
+          hasNextPage
         }}
       }}
     }}
     """
+    payload_dict = {"query": query}
+    payload_str = json.dumps(payload_dict, separators=(",", ":"), ensure_ascii=False)
+    return payload_str
 
-    payload = json.dumps({"query": query}, separators=(",", ":"))
-    signature = generate_signature(APP_ID, timestamp, payload, SECRET)
+def sign_request(app_id, timestamp, payload, secret):
+    raw = f"{app_id}{timestamp}{payload}{secret}"
+    return hashlib.sha256(raw.encode("utf-8")).hexdigest()
+
+def search_offers(keyword="celular"):
+    payload = build_payload(keyword)
+    timestamp = str(int(time.time()))
+    signature = sign_request(APP_ID, timestamp, payload, SECRET)
 
     headers = {
-        "Authorization": f"SHA256 Credential={APP_ID},Timestamp={timestamp},Signature={signature}",
-        "Content-Type": "application/json"
+        "Content-Type": "application/json",
+        "Authorization": f"SHA256 Credential={APP_ID},Timestamp={timestamp},Signature={signature}"
     }
 
-    response = requests.post(url, headers=headers, data=payload)
+    response = requests.post(URL, headers=headers, data=payload, timeout=30)
     return response.json()
 
 if __name__ == "__main__":
